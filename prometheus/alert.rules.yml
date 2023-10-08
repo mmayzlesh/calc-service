@@ -1,0 +1,30 @@
+groups:
+- name: CalcAppAlerts
+  rules:
+  
+  # Alert when root endpoint is accessed
+  - alert: APITimeTriggered
+    expr: increase(api_root_time_accessed_total[5m]) > 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      description: "Root API endpoint (time retrieval) was accessed."
+
+  # Alert when sum operation is requested
+  - alert: SumOperationRequested
+    expr: increase(api_sum_requested_total[5m]) > 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      description: "Sum operation was requested."
+
+  # Alert when a result is deleted
+  - alert: ResultDeletion
+    expr: increase(api_delete_triggered_total[5m]) > 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      description: "A result was deleted."

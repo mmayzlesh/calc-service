@@ -1,0 +1,20 @@
+# redis-values.yaml
+global:
+  redis:
+    password: "" # No password is set
+
+auth:
+  enabled: false
+
+replica:
+## Number of Redis replicas to deploy
+  replicaCount: 1
+
+# usePassword: false # Ensures password is not used
+
+master:
+  configmap: |-
+    appendonly yes
+
+persistence:
+  enabled: true

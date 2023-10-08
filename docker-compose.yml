@@ -1,0 +1,65 @@
+version: '3'
+services:
+  calc-app:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - calc-network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine3.18
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf  # Mount the local 'redis.conf' file to the configuration file location in the container
+      - calc-redis-data:/data  # Mount a named volume for Redis data
+    command: redis-server /usr/local/etc/redis/redis.conf  # Start the Redis server with the custom configuration file    
+#    ports:
+#      - "6379:6379"
+    networks:
+      - calc-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
+    depends_on:
+      - calc-app
+    networks:
+      - calc-network
+
+  alertmanager:
+    image: prom/alertmanager:latest
+#    environment:
+#      - SLACK_API_URL    
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+#      - ./alertmanager/entrypoint.sh:/etc/alertmanager/entrypoint.sh
+    depends_on:
+      - postfix
+    networks:
+      - calc-network
+#    entrypoint: /etc/alertmanager/entrypoint.sh
+
+  postfix:
+    image: boky/postfix
+    environment:
+      - POSTFIX_myhostname=749ep.site
+      - ALLOWED_SENDER_DOMAINS=749ep.site
+    networks:
+      - calc-network
+    ports:
+      - "25:25"  # Expose SMTP port for sending emails
+
+
+networks:
+  calc-network:
+
+volumes: # Define named volumes
+  calc-redis-data:  # Named volume for storing Redis data
