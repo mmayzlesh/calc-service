@@ -2,6 +2,12 @@
 
 This repository contains the configurations and code for deploying Your Project Name. The system can be deployed using either Docker Compose or Helm, providing flexibility based on your deployment needs.
 
+## Architecture
+- **Redis**: Used to store and persist data.
+- **Core System (calc-app)**: Serves the API using Gunicorn.
+- **Postfix**: Acts as an SMTP server.
+- **Prometheus and Alertmanager**: Used to scrape metrics and send notifications based on predefined rules.
+
 ## Prerequisites
 - Docker and Docker Compose installed (for Docker Compose deployment).
 - Kubernetes cluster and Helm installed (for Helm deployment).
@@ -48,15 +54,6 @@ After the deployment, you can access the services at:
 - Prometheus: http://localhost:30900
 - Alertmanager: http://localhost:30903
 
-## Architecture
-- Redis: Used to store and persist data.
-- Core System: Serves the API using Gunicorn.
-- Postfix: Acts as an SMTP server.
-- Prometheus and Alertmanager: Used to scrape metrics and send notifications based on predefined rules.
-
-## Email Configuration
-Emails will be sent from 749ep.site domain (configurable).
-
 ## Endpoints
 **/** - Returns access time of the local machine formatted as UTC.
 
@@ -69,3 +66,41 @@ Emails will be sent from 749ep.site domain (configurable).
 **/metrics** - Address for Prometheus to scrape the system metrics
 
 In addition to the above, there are health and readiness endpoints utilized by Kubernetes.
+
+## Usage
+
+All examples here use the Helm deployment ports. If using Docker Compose, adjust ports accordingly.
+
+### Root API call
+
+Make a GET request to the root API endpoint:
+
+```bash
+curl http://localhost:30080/
+```
+### Calculate
+Perform calculations by making POST requests to the /calculate endpoint. 
+
+You can use different operations, such as "sum" or "+" or "product" or "*".
+#### Addition
+```
+curl -X POST -H "Content-Type: application/json" -d '{"num1": 5, "num2": 3, "operation": "sum"}' http://localhost:30080/calculate
+```
+#### Multiplication
+```
+curl -X POST -H "Content-Type: application/json" -d '{"num1": 5, "num2": 3, "operation": "*"}' http://localhost:30080/calculate
+```
+### Get results list
+Retrieve the results list by making a GET request to the /results endpoint:
+
+```
+curl http://localhost:30080/results
+```
+
+### Delete a record
+```
+curl -X DELETE http://localhost:30080/results/<key from results list>
+```
+
+## Email Configuration
+Emails will be sent from 749ep.site domain (configurable).
