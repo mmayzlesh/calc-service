@@ -1,6 +1,6 @@
 # calc-service
 
-This repository contains the configurations and code for deploying Your Project Name. The system can be deployed using either Docker Compose or Helm, providing flexibility based on your deployment needs.
+This repository contains the configurations and code for deploying calc-service. The system can be deployed using either Docker Compose or Helm, providing flexibility based on your deployment needs.
 
 ## Architecture
 - **Redis**: Used to store and persist data.
