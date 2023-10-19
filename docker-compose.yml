@@ -18,7 +18,10 @@ services:
 #    ports:
 #      - "6379:6379"
     networks:
-      - calc-network
+      calc-network:
+        aliases:
+          - redis-master
+
 
   prometheus:
     image: prom/prometheus:latest
